@@ -45,6 +45,20 @@ module Pipedrive
       super(struct_attrs)
     end
 
+    # Updates the object.
+    #
+    # @param [Hash] opts
+    # @return [Boolean]
+    def update(opts = {})
+      res = put "#{resource_path}/#{id}", :body => opts
+      if res.success?
+        res['data'] = Hash[res['data'].map {|k, v| [k.to_sym, v] }]
+        @table.merge!(res['data'])
+      else
+        false
+      end
+    end
+
     class << self
       # Sets the authentication credentials in a class variable.
       #
@@ -102,20 +116,6 @@ module Pipedrive
       def find_by_name(name, opts={})
         res = get "#{resource_path}/find", :query => { :term => name }.merge(opts)
         res.ok? ? new_list(res) : bad_response(res,{:name => name}.merge(opts))
-      end
-
-      # Updates the object.
-      #
-      # @param [Hash] opts
-      # @return [Boolean]
-      def update(opts = {})
-        res = put "#{resource_path}/#{id}", :body => opts
-        if res.success?
-          res['data'] = Hash[res['data'].map {|k, v| [k.to_sym, v] }]
-          @table.merge!(res['data'])
-        else
-          false
-        end
       end
 
       def resource_path
