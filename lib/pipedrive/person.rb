@@ -14,7 +14,7 @@ module Pipedrive
     end
 
     def activities
-      puts "GGGGGG"
+      puts "OOOOOOOOOOOOOOOOOO"
       Activity.all(get "#{resource_path}/#{id}/activities")
     end
   end
