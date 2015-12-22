@@ -14,8 +14,18 @@ module Pipedrive
     end
 
     def activities
-      puts "OOOOOOOOOOOOOOOOOO"
       Activity.all(get "#{resource_path}/#{id}/activities")
+    end
+
+    def add_follower(user_id)
+      opts = {user_id: user_id}
+      res = post "#{resource_path}/#{id}/followers", :body => opts
+      res.success? ? res['data']['id'] : bad_response(res,opts)
+    end
+
+     def add_product(opts = {})
+      res = post "#{resource_path}/#{id}/products", :body => opts
+      res.success? ? res['data']['product_attachment_id'] : bad_response(res,opts)
     end
   end
 end
