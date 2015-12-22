@@ -13,6 +13,11 @@ module Pipedrive
         res.success? ? res['data']['id'] : bad_response(res,opts)
       end
 
+      def del_follower(person_id, user_id)
+        opts = {user_id: user_id}
+        res = delete "#{resource_path}/#{person_id}/followers/#{user_id}", :body => opts
+        res.success? ? res['data']['id'] : bad_response(res,opts)
+      end
     end
 
     def deals()
