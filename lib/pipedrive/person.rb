@@ -7,6 +7,12 @@ module Pipedrive
         find_by_name(name, :org_id => opts[:org_id]).first || create(opts.merge(:name => name))
       end
 
+      def add_follower(person_id, user_id)
+        opts = {user_id: user_id}
+        res = post "#{resource_path}/#{person_id}/followers", :body => opts
+        res.success? ? res['data']['id'] : bad_response(res,opts)
+      end
+
     end
 
     def deals()
