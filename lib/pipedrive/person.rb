@@ -28,6 +28,10 @@ module Pipedrive
       Activity.all(get "#{resource_path}/#{id}/activities")
     end
 
+    def followers
+      Follower.all(get "#{resource_path}/#{id}/followers")
+    end
+
     def add_follower(user_id)
       opts = {user_id: user_id}
       res = post "#{resource_path}/#{id}/followers", :body => opts
