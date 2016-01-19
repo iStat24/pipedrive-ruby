@@ -33,9 +33,16 @@ module Pipedrive
       res.success? ? res['data']['id'] : bad_response(res,opts)
     end
 
+    def merge(person_id)
+      opts = {merge_with_id: person_id}
+      res = post "#{resource_path}/#{id}/merge", :body => opts
+      res.success? ? res['data']['id'] : bad_response(res,opts)
+    end
+
     def add_product(opts = {})
       res = post "#{resource_path}/#{id}/products", :body => opts
       res.success? ? res['data']['product_attachment_id'] : bad_response(res,opts)
     end
+
   end
 end
