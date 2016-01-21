@@ -6,16 +6,16 @@ module Pipedrive
 
   # Globally set request headers
   HEADERS = {
-    "User-Agent"    => "istat24.Pipedrive.Api",
-    "Accept"        => "application/json",
-    "Content-Type"  => "application/x-www-form-urlencoded"
+      "User-Agent"    => "istat24.Pipedrive.Api",
+      "Accept"        => "application/json",
+      "Content-Type"  => "application/x-www-form-urlencoded"
   }
 
   # Base class for setting HTTParty configurations globally
   class Base < OpenStruct
 
     include HTTParty
-    
+
     base_uri 'https://api.pipedrive.com/v1'
     headers HEADERS
     format :json
@@ -60,14 +60,6 @@ module Pipedrive
     end
 
     class << self
-      # Sets the authentication credentials in a class variable.
-      #
-      # @param [String] email cl.ly email
-      # @param [String] password cl.ly password
-      # @return [Hash] authentication credentials
-      def authenticate(token)
-        default_params.merge :api_token => token
-      end
 
       # Examines a bad response and raises an appropriate exception
       #
@@ -84,11 +76,11 @@ module Pipedrive
         attrs['data'].is_a?(Array) ? attrs['data'].map {|data| self.new( 'data' => data ) } : []
       end
 
-      def all(response = nil, options={},get_absolutely_all=false)
-        res = response || get(resource_path, options)
+      def all(response = nil, options={}, get_absolutely_all=false)
+        res = response || get(resource_path, :query => {}.merge(options))
         if res.ok?
           data = res['data'].nil? ? [] : res['data'].map{|obj| new(obj)}
-          if get_absolutely_all && res['additional_data']['pagination'] && res['additional_data']['pagination'] && res['additional_data']['pagination']['more_items_in_collection']
+          if get_absolutely_all && res['additional_data']['pagination'] && res['additional_data']['pagination']['more_items_in_collection']
             options[:query] = options[:query].merge({:start => res['additional_data']['pagination']['next_start']})
             data += self.all(nil,options,true)
           end
@@ -98,24 +90,29 @@ module Pipedrive
         end
       end
 
-      def create( opts = {} )
-        res = post resource_path, :body => opts
+      def create(options = {} )
+        if options.keys.include?(:api_token)
+          api_token = options.delete(:api_token)
+          res = post resource_path, body: options, query: {api_token: api_token}
+        else
+          res = post resource_path, body: options
+        end
         if res.success?
-          res['data'] = opts.merge res['data']
+          res['data'] = options.merge res['data']
           new(res)
         else
-          bad_response(res,opts)
+          bad_response(res,options)
         end
       end
-      
-      def find(id)
-        res = get "#{resource_path}/#{id}"
+
+      def find(id, options={})
+        res = get "#{resource_path}/#{id}", :query => {}.merge(options)
         res.ok? ? new(res) : bad_response(res,id)
       end
 
-      def find_by_name(name, opts={})
-        res = get "#{resource_path}/find", :query => { :term => name }.merge(opts)
-        res.ok? ? new_list(res) : bad_response(res,{:name => name}.merge(opts))
+      def find_by_name(name, options={})
+        res = get "#{resource_path}/find", :query => { :term => name }.merge(options)
+        res.ok? ? new_list(res) : bad_response(res,{:name => name}.merge(options))
       end
 
       def resource_path

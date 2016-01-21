@@ -24,13 +24,5 @@ require 'pipedrive/user-setting'
 require 'pipedrive/goal'
 require 'pipedrive/user-connection'
 require 'pipedrive/push-notification'
-require 'pipedrive/recent'
-require 'pipedrive/follower'
-
-module Pipedrive
-
-  def self.authenticate(token)
-    Base.authenticate(token)
-  end
-
-end
+#require 'pipedrive/recent'
+#require 'pipedrive/follower'
