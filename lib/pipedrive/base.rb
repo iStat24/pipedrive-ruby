@@ -6,7 +6,7 @@ module Pipedrive
 
   # Globally set request headers
   HEADERS = {
-    "User-Agent"    => "Ruby.Pipedrive.Api",
+    "User-Agent"    => "istat24.Pipedrive.Api",
     "Accept"        => "application/json",
     "Content-Type"  => "application/x-www-form-urlencoded"
   }
