@@ -66,7 +66,7 @@ module Pipedrive
       # @param [String] password cl.ly password
       # @return [Hash] authentication credentials
       def authenticate(token)
-        default_params :api_token => token
+        default_params.merge :api_token => token
       end
 
       # Examines a bad response and raises an appropriate exception
