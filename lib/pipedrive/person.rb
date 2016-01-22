@@ -9,8 +9,9 @@ module Pipedrive
       
     end
 
-    def deals()
-      Deal.all(get "#{resource_path}/#{id}/deals", :everyone => 1)
+    def deals(options={})
+      Deal.all(get "#{resource_path}/#{id}/deals", :query => {:everyone => 1}.merge(options))
+      res.ok? ? new(res) : bad_response(res,id)
     end
 
     def activities
