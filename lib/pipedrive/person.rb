@@ -10,18 +10,15 @@ module Pipedrive
     end
 
     def deals(options={})
-      Deal.all(get "#{resource_path}/#{id}/deals", :query => {:everyone => 1}.merge(options))
-      res.ok? ? new(res) : bad_response(res,id)
+      res = Deal.all(get "#{resource_path}/#{id}/deals", :query => {:everyone => 1}.merge(options))
     end
 
     def activities(options={})
       Activity.all(get "#{resource_path}/#{person_id}/activities", :query => {}.merge(options))
-      res.ok? ? new(res) : bad_response(res, id)
     end
 
     def followers(options={})
       Follower.all(get "#{resource_path}/#{person_id}/followers", :query => {}.merge(options))
-      res.ok? ? new(res) : bad_response(res, id)
     end
 
 
