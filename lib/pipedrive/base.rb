@@ -50,7 +50,12 @@ module Pipedrive
     # @param [Hash] opts
     # @return [Boolean]
     def update(opts = {})
-      res = put "#{resource_path}/#{id}", :body => opts
+      if opts.keys.include?(:api_token)
+        api_token = opts.delete(:api_token)
+        res = put "#{resource_path}/#{id}", :body => opts, query: {api_token: api_token}
+      else
+        res = put "#{resource_path}/#{id}", :body => opts
+      end
       if res.success?
         res['data'] = Hash[res['data'].map {|k, v| [k.to_sym, v] }]
         @table.merge!(res['data'])
