@@ -1,6 +1,18 @@
 module Pipedrive
   class Deal < Base
 
+    class << self
+      def timeline(response, options = {})
+        default_options = { interval: 'day', start_date: Date.today.strftime('%Y-%m-%d'), amount: 1, field_key: 'update_time'}
+        res = response || get(resource_path + '/timeline', :query => default_options.merge!(options))
+        if res.ok?
+          res['data'].nil? ? [] : res['data'].map{|obj| new(obj)}
+        else
+          bad_response(res, options)
+        end
+      end
+    end
+
     def add_product(opts = {})
       res = post "#{resource_path}/#{id}/products", :body => opts
       res.success? ? res['data']['product_attachment_id'] : bad_response(res,opts)
