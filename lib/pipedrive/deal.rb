@@ -6,7 +6,7 @@ module Pipedrive
         default_options = { interval: 'day', start_date: Date.today.strftime('%Y-%m-%d'), amount: 1, field_key: 'update_time'}
         res = response || get(resource_path + '/timeline', :query => default_options.merge!(options))
         if res.ok?
-          res['data'].nil? ? [] : res['data'].map{|obj| new(obj)}
+          res['data'].nil? ? [] : res['data'].try(:first).try(:[], 'deals').each { |obj| new(obj) }
         else
           bad_response(res, options)
         end
@@ -38,6 +38,9 @@ module Pipedrive
     def notes(opts = {:sort_by => 'add_time', :sort_mode => 'desc'})
       Note.all( get("/notes", :query => opts.merge(:deal_id => id) ) )
     end
-    
+
+    def persons(opts = {})
+      Person.all( get "#{resource_path}/#{id}/persons", query: opts )
+    end
   end
 end
